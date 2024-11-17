@@ -70,21 +70,22 @@ EOF
 
 # Step 7: Add Kubernetes Repository
 echo "Adding Kubernetes repository..."
+# This overwrites any existing configuration in /etc/yum.repos.d/kubernetes.repo
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.28/rpm/
 enabled=1
 gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
 EOF
 
 sudo yum update -y
 
 # Step 8: Install Kubernetes Components
 echo "Installing kubelet, kubeadm, and kubectl..."
-sudo yum install -y kubelet-1.28.0 kubeadm-1.28.0 kubectl-1.28.0
+sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 sudo systemctl enable --now kubelet
 
 # Step 9: Pull the Correct Pause Image
