@@ -4,6 +4,10 @@ set -e
 
 echo "Starting Kubernetes installation..."
 
+# Set SELinux in permissive mode (effectively disabling it)
+sudo setenforce 0
+sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
 # Step 1: Update and Install Required Packages
 echo "Updating system and installing prerequisites..."
 sudo yum update -y
